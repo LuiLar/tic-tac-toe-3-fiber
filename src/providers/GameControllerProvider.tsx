@@ -3,44 +3,15 @@ import { BoardPiece, PlayerType } from "../enums"
 import { getAIMove } from "../utils/AI"
 import { isThereADraw, isThereAWinner, generateBlankGrid } from "../utils/helperFunctions"
 import { AI_MOVE_INTERVAL } from "../utils/constants"
+import type { GameControllerContextType } from "./GameControllerProviderType"
+import { initialState, players } from "./GameControllerProviderInitialState"
 
-// Local vars outside of component to prevent
-// re-declaration on re-renders
 let turnSwitcher: boolean = false
-const players: Player[] = [
-  { type: PlayerType.HUMAN, symbol: BoardPiece.X },
-  { type: PlayerType.AI, symbol: BoardPiece.O },
-]
-
-type GameControllerContextType = {
-  grid: Grid
-  winner: Player | null
-  draw: boolean
-  currentPlayer: Player
-  showSymbolSelectionModal: boolean
-  nextMatch: () => void
-  resetGame: () => void
-  verifyWinner: () => void
-  onCellCliked: (row: number, col: number) => void
-  onSymbolSelectionModalClose: (symbolSelected: BoardPiece) => void
-}
-
-const initialState: GameControllerContextType = {
-  grid: generateBlankGrid(),
-  winner: null,
-  draw: false,
-  currentPlayer: { type: PlayerType.HUMAN, symbol: BoardPiece.X },
-  showSymbolSelectionModal: true,
-  nextMatch: () => { },
-  resetGame: () => { },
-  verifyWinner: () => { },
-  onCellCliked: () => { },
-  onSymbolSelectionModalClose: () => { },
-}
 
 const GameControllerContext = createContext<GameControllerContextType>(initialState)
 
 const GameControllerProvider = ({ children }: { children: React.ReactNode }) => {
+  ////////////////////////////////////////////////////////////
   // STATE HANDLERS
   const [ winner, setWinner ] = useState<Player | null>(initialState.winner)
   const [ draw, setDraw ] = useState<boolean>(initialState.draw)
@@ -50,7 +21,10 @@ const GameControllerProvider = ({ children }: { children: React.ReactNode }) => 
   // CALLBACKS
   const verifyWinner = useCallback(() => isThereAWinner(grid), [ grid ])
   const verifyDraw = useCallback(() => isThereADraw(grid), [ grid ])
+  ////////////////////////////////////////////////////////////
 
+  ////////////////////////////////////////////////////////////
+  // ACTIONS
   const nextMatch = () => {
     startTransition(() => {
       turnSwitcher = false
@@ -91,6 +65,7 @@ const GameControllerProvider = ({ children }: { children: React.ReactNode }) => 
       setCurrentPlayer(players[ +turnSwitcher ])
     })
   }
+  ////////////////////////////////////////////////////////////
 
   useEffect(() => {
     if (!winner && !draw) {
