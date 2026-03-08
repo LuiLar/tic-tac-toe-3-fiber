@@ -24,7 +24,7 @@ After downloading this repo in your machine:
 3. Click on the URL shown in the result or copy it and open it in your prefer browser
 
 ## Nice to have
-* [ ] Show a scoreboard
+* [x] Show a scoreboard
 * [ ] Play againts another human player
 * [ ] Flip a coin to see which player starts
 * [ ] The looser player from the last round can start in the current round

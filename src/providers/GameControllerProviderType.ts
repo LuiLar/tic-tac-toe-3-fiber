@@ -6,6 +6,7 @@ export type GameControllerContextType = {
   draw: boolean
   currentPlayer: Player
   showSymbolSelectionModal: boolean
+  matchesHistory: (Player | null)[]
   nextMatch: () => void
   resetGame: () => void
   verifyWinner: () => void

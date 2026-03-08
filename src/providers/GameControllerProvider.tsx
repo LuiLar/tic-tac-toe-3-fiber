@@ -18,6 +18,7 @@ const GameControllerProvider = ({ children }: { children: React.ReactNode }) => 
   const [ currentPlayer, setCurrentPlayer ] = useState<Player>(initialState.currentPlayer)
   const [ grid, setGrid ] = useState<Grid>(initialState.grid)
   const [ showSymbolSelectionModal, setShowSymbolSelectionModal ] = useState<boolean>(initialState.showSymbolSelectionModal)
+  const [ matchesHistory, setMatchesHistory ] = useState<(Player | null)[]>([])
   // CALLBACKS
   const verifyWinner = useCallback(() => isThereAWinner(grid), [ grid ])
   const verifyDraw = useCallback(() => isThereADraw(grid), [ grid ])
@@ -39,6 +40,7 @@ const GameControllerProvider = ({ children }: { children: React.ReactNode }) => 
     startTransition(() => {
       nextMatch()
       setShowSymbolSelectionModal(true)
+      setMatchesHistory([])
     })
   }
 
@@ -51,8 +53,14 @@ const GameControllerProvider = ({ children }: { children: React.ReactNode }) => 
 
     startTransition(() => {
       setGrid(newGrid)
-      if (verifyWinner()) setWinner(currentPlayer)
-      else if (verifyDraw()) setDraw(true)
+      if (verifyWinner()) {
+        setWinner(currentPlayer)
+        setMatchesHistory(prev => [ ...prev, currentPlayer ])
+      }
+      else if (verifyDraw()) {
+        setDraw(true)
+        setMatchesHistory(prev => [ ...prev, null ])
+      }
       else setCurrentPlayer(players[ +turnSwitcher ])
     })
   }
@@ -85,6 +93,7 @@ const GameControllerProvider = ({ children }: { children: React.ReactNode }) => 
     draw,
     currentPlayer,
     showSymbolSelectionModal,
+    matchesHistory,
     nextMatch,
     resetGame,
     verifyWinner,

@@ -3,6 +3,7 @@ import Board from './components/Board'
 import { GameControllerContext } from './providers/GameControllerProvider'
 import './App.css'
 import SymbolSelectionModal from './components/SymbolSelectionModal'
+import ScoreBoard from './components/ScoreBoard'
 
 const App = () => {
   const {
@@ -37,7 +38,11 @@ const App = () => {
         <button onClick={resetGame}>RESET</button>
       </header>
 
-      <Board />
+      <main>
+        <div />
+        <Board />
+        <ScoreBoard />
+      </main>
 
       <footer>
         <p>Made by Luis Larghi</p>

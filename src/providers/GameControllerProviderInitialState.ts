@@ -13,6 +13,7 @@ export const initialState: GameControllerContextType = {
   draw: false,
   currentPlayer: { type: PlayerType.HUMAN, symbol: BoardPiece.X },
   showSymbolSelectionModal: true,
+  matchesHistory: [],
   nextMatch: () => { },
   resetGame: () => { },
   verifyWinner: () => { },
