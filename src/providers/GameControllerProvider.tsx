@@ -17,9 +17,12 @@ type GameControllerContextType = {
   winner: Player | null
   draw: boolean
   currentPlayer: Player
+  showSymbolSelectionModal: boolean
+  nextMatch: () => void
   resetGame: () => void
   verifyWinner: () => void
   onCellCliked: (row: number, col: number) => void
+  onSymbolSelectionModalClose: (symbolSelected: BoardPiece) => void
 }
 
 const initialState: GameControllerContextType = {
@@ -27,31 +30,41 @@ const initialState: GameControllerContextType = {
   winner: null,
   draw: false,
   currentPlayer: { type: PlayerType.HUMAN, symbol: BoardPiece.X },
+  showSymbolSelectionModal: true,
+  nextMatch: () => { },
   resetGame: () => { },
   verifyWinner: () => { },
   onCellCliked: () => { },
+  onSymbolSelectionModalClose: () => { },
 }
 
 const GameControllerContext = createContext<GameControllerContextType>(initialState)
 
 const GameControllerProvider = ({ children }: { children: React.ReactNode }) => {
   // STATE HANDLERS
-  const [ winner, setWinner ] = useState<Player | null>(null)
-  const [ draw, setDraw ] = useState<boolean>(false)
-  const [ currentPlayer, setCurrentPlayer ] = useState<Player>(players[ +turnSwitcher ])
-  const [ grid, setGrid ] = useState<Grid>(generateBlankGrid())
+  const [ winner, setWinner ] = useState<Player | null>(initialState.winner)
+  const [ draw, setDraw ] = useState<boolean>(initialState.draw)
+  const [ currentPlayer, setCurrentPlayer ] = useState<Player>(initialState.currentPlayer)
+  const [ grid, setGrid ] = useState<Grid>(initialState.grid)
+  const [ showSymbolSelectionModal, setShowSymbolSelectionModal ] = useState<boolean>(initialState.showSymbolSelectionModal)
   // CALLBACKS
   const verifyWinner = useCallback(() => isThereAWinner(grid), [ grid ])
   const verifyDraw = useCallback(() => isThereADraw(grid), [ grid ])
 
-  const resetGame = () => {
-    turnSwitcher = false
-
+  const nextMatch = () => {
     startTransition(() => {
+      turnSwitcher = false
       setGrid(generateBlankGrid())
       setCurrentPlayer(players[ +turnSwitcher ])
       setDraw(false)
       setWinner(null)
+    })
+  }
+
+  const resetGame = () => {
+    startTransition(() => {
+      nextMatch()
+      setShowSymbolSelectionModal(true)
     })
   }
 
@@ -67,6 +80,15 @@ const GameControllerProvider = ({ children }: { children: React.ReactNode }) => 
       if (verifyWinner()) setWinner(currentPlayer)
       else if (verifyDraw()) setDraw(true)
       else setCurrentPlayer(players[ +turnSwitcher ])
+    })
+  }
+
+  const onSymbolSelectionModalClose = (symbolSelected: BoardPiece) => {
+    startTransition(() => {
+      setShowSymbolSelectionModal(false)
+      players[ 0 ].symbol = symbolSelected
+      players[ 1 ].symbol = symbolSelected === BoardPiece.X ? BoardPiece.O : BoardPiece.X
+      setCurrentPlayer(players[ +turnSwitcher ])
     })
   }
 
@@ -87,9 +109,12 @@ const GameControllerProvider = ({ children }: { children: React.ReactNode }) => 
     winner,
     draw,
     currentPlayer,
+    showSymbolSelectionModal,
+    nextMatch,
     resetGame,
     verifyWinner,
     onCellCliked,
+    onSymbolSelectionModalClose,
   }
 
   return (

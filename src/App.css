@@ -4,8 +4,8 @@ header {
   align-items: center;
   justify-content: space-between;
 
-  p,
-  h1 {
-    flex: 1
+  p {
+    margin: 0 0 10px 0;
+    text-align: center;
   }
 }
