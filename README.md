@@ -1,73 +1,33 @@
-# React + TypeScript + Vite
+# TIC TAC TOE GAME
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Made with Vite + React + TypeScript.
 
-Currently, two official plugins are available:
+The current state of the game lets a human player play against a computer.
+The human player can select the symbol they want to play with (X or O) and the computer will play with the other symbol. The computer will make random moves on the board.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+If you never have played this clasic game, it consist on placing your choosen symbol in a 3x3 grid and try to win by placing 3 of the same symbol in a horizontal, vertical or diagonal line.
 
-## React Compiler
+If neither of the players can complete a line of 3 symbols after filling up the board, the match ends in a DRAW.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## How to run the game locally
 
-## Expanding the ESLint configuration
+After downloading this repo in your machine:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. Install needed dependencies
+   ```bash
+   npm install
+   ```
+2. Then run the app on a dev env
+   ```bash
+   npm run dev
+   ```
+3. Click on the URL shown in the result or copy it and open it in your prefer browser
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Nice to have
+* [ ] Show a scoreboard
+* [ ] Play againts another human player
+* [ ] Flip a coin to see which player starts
+* [ ] The looser player from the last round can start in the current round
+* [ ] Choose randomly which player starts first turn
+* [ ] Add react-three-fiber lib to display 3D elements
+* [ ] Add sound FXs
