@@ -1,14 +1,16 @@
 import { createContext, startTransition, useCallback, useEffect, useState } from "react"
 import { BoardPiece, PlayerType } from "../enums"
-import { getAIMove } from "../AI"
+import { getAIMove } from "../utils/AI"
+import { isThereADraw, isThereAWinner, generateBlankGrid } from "../utils/helperFunctions"
+import { AI_MOVE_INTERVAL } from "../utils/constants"
 
-const AI_MOVE_INTERVAL = 500
-export const GRID_SIZE = 3
+// Local vars outside of component to prevent
+// re-declaration on re-renders
 let turnSwitcher: boolean = false
-
-const generateBlankGrid = (): null[][] => {
-  return new Array(GRID_SIZE).fill(null).map(() => new Array(GRID_SIZE).fill(null))
-}
+const players: Player[] = [
+  { type: PlayerType.HUMAN, symbol: BoardPiece.X },
+  { type: PlayerType.AI, symbol: BoardPiece.O },
+]
 
 type GameControllerContextType = {
   grid: Grid
@@ -33,15 +35,14 @@ const initialState: GameControllerContextType = {
 const GameControllerContext = createContext<GameControllerContextType>(initialState)
 
 const GameControllerProvider = ({ children }: { children: React.ReactNode }) => {
-  const players: Player[] = [
-    { type: PlayerType.HUMAN, symbol: BoardPiece.X },
-    { type: PlayerType.AI, symbol: BoardPiece.O },
-  ]
-
+  // STATE HANDLERS
   const [ winner, setWinner ] = useState<Player | null>(null)
   const [ draw, setDraw ] = useState<boolean>(false)
   const [ currentPlayer, setCurrentPlayer ] = useState<Player>(players[ +turnSwitcher ])
   const [ grid, setGrid ] = useState<Grid>(generateBlankGrid())
+  // CALLBACKS
+  const verifyWinner = useCallback(() => isThereAWinner(grid), [ grid ])
+  const verifyDraw = useCallback(() => isThereADraw(grid), [ grid ])
 
   const resetGame = () => {
     turnSwitcher = false
@@ -53,44 +54,6 @@ const GameControllerProvider = ({ children }: { children: React.ReactNode }) => 
       setWinner(null)
     })
   }
-
-  /**
-   * This is more performant than iterating over the grid,
-   * but it is not the most elegant solution
-   */
-  const verifyWinner = useCallback((): boolean => {
-    // Verify horizontally
-    if (
-      (grid[ 0 ][ 0 ] && grid[ 0 ][ 0 ] === grid[ 0 ][ 1 ] && grid[ 0 ][ 0 ] === grid[ 0 ][ 2 ]) ||
-      (grid[ 1 ][ 0 ] && grid[ 1 ][ 0 ] === grid[ 1 ][ 1 ] && grid[ 1 ][ 0 ] === grid[ 1 ][ 2 ]) ||
-      (grid[ 2 ][ 0 ] && grid[ 2 ][ 0 ] === grid[ 2 ][ 1 ] && grid[ 2 ][ 0 ] === grid[ 2 ][ 2 ])
-    ) {
-      return true
-    }
-
-    // Verify vertically
-    if (
-      (grid[ 0 ][ 0 ] && grid[ 0 ][ 0 ] === grid[ 1 ][ 0 ] && grid[ 0 ][ 0 ] === grid[ 2 ][ 0 ]) ||
-      (grid[ 0 ][ 1 ] && grid[ 0 ][ 1 ] === grid[ 1 ][ 1 ] && grid[ 0 ][ 1 ] === grid[ 2 ][ 1 ]) ||
-      (grid[ 0 ][ 2 ] && grid[ 0 ][ 2 ] === grid[ 1 ][ 2 ] && grid[ 0 ][ 2 ] === grid[ 2 ][ 2 ])
-    ) {
-      return true
-    }
-
-    // Verify diagonally
-    if (
-      (grid[ 0 ][ 0 ] && grid[ 0 ][ 0 ] === grid[ 1 ][ 1 ] && grid[ 0 ][ 0 ] === grid[ 2 ][ 2 ]) ||
-      (grid[ 0 ][ 2 ] && grid[ 0 ][ 2 ] === grid[ 1 ][ 1 ] && grid[ 0 ][ 2 ] === grid[ 2 ][ 0 ])
-    ) {
-      return true
-    }
-
-    return false
-  }, [ grid ])
-
-  const verifyDraw = useCallback((): boolean => {
-    return grid.flat().every(cell => cell !== null)
-  }, [ grid ])
 
   const onCellCliked = (row: number, col: number) => {
     if (winner) return

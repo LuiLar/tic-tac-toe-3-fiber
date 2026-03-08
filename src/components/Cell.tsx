@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { GRID_SIZE } from "../providers/GameControllerProvider"
+import { GRID_SIZE } from "../utils/constants"
 import type { BoardPiece } from "../enums"
 import './Cell.css'
 

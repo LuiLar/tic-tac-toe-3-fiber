@@ -1,4 +1,4 @@
-import { GRID_SIZE } from "./providers/GameControllerProvider"
+import { GRID_SIZE } from "./constants"
 
 /**
  * Simple AI logics that picks the next free cell
